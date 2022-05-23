@@ -1,0 +1,101 @@
+----------------------------SECTION-1----------------------------
+Q1) 
+CREATE TABLE DEPT(DEPTNO int(2),DNAME varchar(15),LOC varchar(10));
+INSERT INTO DEPT(DEPTNO,DNAME,LOC)values
+(10,'ACCOUNTING', 'NEW YORK'),
+(20 ,'RESEARCH', 'DALLAS'),
+(30 ,'SALES', 'CHICAGO'),
+(40 ,'OPERATIONS', 'BOSTON');
+SELECT * FROM DEPT;
+
+Q2)
+CREATE TABLE EMP(EMPNO int(4),ENAME varchar(10),JOB varchar(9),HIREDATE date,SAL float(7,2),COMM float(7,2),DEPTNO int(2));
+INSERT INTO EMP(EMPNO,ENAME,JOB,HIREDATE,SAL,COMM,DEPTNO)values
+(7839, 'KING', 'MANAGER', '1991-11-17', 5000, NULL, 10),
+(7698, 'BLAKE', 'CLERK', '1981-05-01', 2850, NULL, 30),
+(7782, 'CLARK' ,'MANAGER' ,'1981-06-09' ,2450 ,NULL ,10),
+(7566, 'JONES', 'CLERK', '1981-04-02', 2975, NULL, 20),
+(7654, 'MARTIN', 'SALESMAN', '1981-09-28', 1250, 1400, 30),
+(7499, 'ALLEN', 'SALESMAN', '1981-02-20', 1600, 300, 30);
+SELECT * FROM EMP;
+
+Q3)
+SELECT * FROM EMP WHERE SAL BETWEEN 2500 AND 5000;
+
+Q4)
+SELECT ENAME FROM EMP ORDER BY ENAME DESC;
+
+Q5)
+SELECT LOWER(JOB) FROM EMP;
+
+Q6)
+SELECT ENAME,CHAR_LENGTH(ENAME) AS 'LENGTH OF ENAME' FROM EMP;
+
+Q7)
+SELECT DEPTNO,COUNT(*) FROM EMP GROUP BY DEPTNO;
+
+Q8)
+SELECT DNAME,ENAME FROM EMP,DEPT WHERE EMP.DEPTNO=DEPT.DEPTNO;
+
+Q9)
+SELECT POSITION('AR' IN ENAME) FROM EMP;
+
+Q10)
+SELECT ENAME, (SAL/100)*20 AS 'HRA' FROM EMP;
+
+
+
+--------------------SECTION-2--------------------------------
+
+Q1)
+CREATE TABLE TEMPP(string1 varchar(20),string2 varchar(20),result varchar(50));
+
+DELIMITER //
+CREATE PROCEDURE PROC1(string1 varchar(20),string2 varchar(20))
+BEGIN 
+    DECLARE s int;
+    SET S=LOCATE(string1,string2);
+    if(S!=0) then
+    INSERT INTO TEMPP VALUES(string1,string2,'string1 exists inside string2');
+    else
+     INSERT INTO TEMPP VALUES(string1,string2,'string1 does not exists inside string2');
+	end if;
+END; //
+DELIMITER ;
+call PROC1('MEET','MEETPATOLIA');
+call PROC1('DAC','CDAC');
+call PROC1('DAC','MEET');
+call PROC1('HORSE','HORSSS');
+SELECT * FROM TEMPP;
+
+Q2)
+CREATE TABLE TEMP(n1 float,n2 float,n3 float, validitychecker varchar(30));
+
+DELIMITER //
+CREATE FUNCTION FUNC1(n1 float,n2 float,n3 float)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+     if(n1+n2>n3) and (n1+n3>n2) and (n2+n3>n1) then
+     return true;
+     else
+     return false;
+    end if;
+END; //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE PRO(n1 float,n2 float,n3 float)
+BEGIN
+     if FUNC1(n1,n2,n3) then
+          INSERT INTO TEMP VALUES(n1,n2,n3,'It is valid triangle');
+	 else
+          INSERT INTO TEMP VALUES(n1,n2,n3,'It is not a valid triangle');
+	end if;
+END; //
+DELIMITER ;
+call PRO(2,3,5);
+call PRO(2,2,5);
+call PRO(3,4,5);
+call PRO(4,5,10);
+SELECT * FROM TEMP;
